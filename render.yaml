@@ -1,0 +1,27 @@
+# Free PostgreSQL expires after 30 days. Export data before that deadline.
+databases:
+  - name: toyota-survey-db
+    plan: free
+    region: oregon
+    postgresMajorVersion: 17
+services:
+  - type: web
+    name: toyota-survey
+    runtime: node
+    repo: https://github.com/nandan-neualto/toyota-survey
+    branch: main
+    region: oregon
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build:render
+    startCommand: npm run start:render
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: 24.15.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: toyota-survey-db
+          property: connectionString
+      - key: STAFF_ACCESS_KEY
+        generateValue: true
