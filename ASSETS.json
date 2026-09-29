@@ -1,0 +1,38 @@
+{
+  "photo": {
+    "file": "toyota-gr-supra-hero.jpg",
+    "sourcePage": "https://www.toyota.com/grsupra/",
+    "imageUrl": "https://tmna.aemassets.toyota.com/is/image/toyota/toyota/vehicles/2026/grsupra2/mlp/welcomemat/desktop_thumb-V2.png?fmt=jpeg&fit=crop&wid=2560",
+    "width": 2560,
+    "height": 1060,
+    "description": "Authentic Toyota GR Supra promotional photograph, black car with red mirrors driving toward the camera through a desert canyon. No baked-in text.",
+    "crop": "Centered car spans approximately 30%-73% of image width; use object-position: 51% 50%. At landscape half-screen ratios near 1:1, front fascia remains visible."
+  },
+  "logo": {
+    "file": "toyota-logo.svg",
+    "sourcePage": "https://www.toyota.com/grsupra/",
+    "imageUrl": null,
+    "source": "Inline header SVG from the official Toyota site, 142 by 32 viewBox. Red square Toyota emblem and black TOYOTA wordmark. Standard SVG namespace corrected from https to http; paths unchanged.",
+    "width": 142,
+    "height": 32
+  },
+  "reuse": {
+    "terms": "https://www.toyota.com/support/legal-terms/",
+    "status": "No open license. Toyota terms limit site/download reuse to personal noncommercial use and require written consent for other use. User should supply their authorized Toyota brand assets or ensure permission before commercial deployment."
+  },
+  "retrieved": "2026-09-28",
+  "fonts": [
+    {
+      "family": "Noto Sans JP",
+      "file": "public/fonts/notosansjp.ttf",
+      "source": "https://github.com/google/fonts/tree/main/ofl/notosansjp",
+      "license": "public/fonts/notosansjp-OFL.txt"
+    },
+    {
+      "family": "Noto Sans Kannada",
+      "file": "public/fonts/notosanskannada.ttf",
+      "source": "https://github.com/google/fonts/tree/main/ofl/notosanskannada",
+      "license": "public/fonts/notosanskannada-OFL.txt"
+    }
+  ]
+}
