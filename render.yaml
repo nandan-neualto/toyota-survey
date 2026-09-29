@@ -3,7 +3,7 @@ databases:
   - name: toyota-survey-db
     plan: free
     region: oregon
-    postgresMajorVersion: 17
+    postgresMajorVersion: "17"
 services:
   - type: web
     name: toyota-survey
