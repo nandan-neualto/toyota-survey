@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./kiosk-polish.css";
 
 export const metadata: Metadata = {
   title: "Your visit. Your voice. | Toyota Experience Centre",

@@ -6,7 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogClose, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { emptyAnswers, highlights, type Answers } from "@/lib/survey";
-import { getSettings, kioskId, saveFeedback, syncFeedback } from "@/lib/local-store";
+import { getSettings, kioskId, saveFeedback, syncFeedback, feedbackReceipt } from "@/lib/local-store";
 import { languageCodes, languageNames, isLanguage, type Language } from "@/lib/languages";
 import { translations, formatMessage } from "@/lib/i18n";
 const faces = [Frown, Frown, Meh, Smile, Smile];
@@ -24,6 +24,7 @@ export default function Kiosk() {
   const [busy, setBusy] = useState(false), [error, setError] = useState(false);
   const [privacy, setPrivacy] = useState(false), [restart, setRestart] = useState(false), [idle, setIdle] = useState(false);
   const [countdown, setCountdown] = useState(30), [doneSeconds, setDoneSeconds] = useState(10), [offlineReady, setOfflineReady] = useState(false);
+  const [receipt,setReceipt] = useState<"queued" | "synced">("queued");
   const submissionId = useRef<string | null>(null), submissionLock = useRef(false), activity = useRef(Date.now()), titleRef = useRef<HTMLHeadingElement>(null);
   const reset = useCallback(() => { setLanguage("en"); setStep(0); setAnswers({ ...emptyAnswers }); setError(false); setIdle(false); setRestart(false); setDoneSeconds(10); submissionId.current = null; activity.current = Date.now(); }, []);
   useEffect(() => { document.documentElement.lang = language; document.title = t.pageTitle; return () => { document.documentElement.lang = "en"; }; }, [language, t.pageTitle]);
@@ -56,6 +57,13 @@ export default function Kiosk() {
   useEffect(() => { if (step !== 4) return; const timer = setInterval(() => setDoneSeconds(s => s - 1), 1000); return () => clearInterval(timer); }, [step]);
   useEffect(() => { if (step === 4 && doneSeconds <= 0) reset(); }, [doneSeconds, step, reset]);
   useEffect(() => {
+    if(step!==4 || !submissionId.current)return;
+    let active=true;const id=submissionId.current;
+    const updateReceipt=()=>{void feedbackReceipt(id).then(value=>{if(active&&value!=="missing")setReceipt(value);}).catch(()=>{});};
+    updateReceipt();window.addEventListener("feedback-change",updateReceipt);
+    return()=>{active=false;window.removeEventListener("feedback-change",updateReceipt);};
+  },[step]);
+  useEffect(() => {
     const context = (document as unknown as { modelContext?: { registerTool: (tool: unknown, options: unknown) => Promise<void> } }).modelContext;
     if (!context?.registerTool) return;
     const controller = new AbortController();
@@ -68,7 +76,7 @@ export default function Kiosk() {
       submissionId.current ??= crypto.randomUUID();
       await saveFeedback({ ...answers, other: answers.highlights.includes("Other") ? answers.other.trim() : "", comment: answers.comment.trim(), id: submissionId.current, kioskId: kioskId(), kioskName: getSettings().name, surveyVersion: 1, language, createdAt: new Date().toISOString() });
       if (navigator.storage?.persist) void navigator.storage.persist().catch(() => {});
-      setDoneSeconds(10); go(4); void syncFeedback().catch(() => {});
+      setReceipt("queued");setDoneSeconds(10); go(4); void syncFeedback().catch(() => {});
     } catch { setError(true); }
     finally { submissionLock.current = false; setBusy(false); }
   }
@@ -83,7 +91,7 @@ export default function Kiosk() {
           {step === 1 && <><span className="eyebrow panel-eyebrow">{t.stages[1]}</span><h1 ref={titleRef} tabIndex={-1} className="step-heading">{t.experienceTitle}</h1><p className="intro small-intro">{t.experienceIntro}</p><div className="question-block"><h2>{t.presentationQuestion}</h2><Ratings compact value={answers.presentation} onChange={v => update("presentation",v)} name={t.presentation} labels={t.ratings} /></div><div className="question-block learning"><h2>{t.informativeQuestion}</h2><RadioGroup aria-label={t.informativeQuestion} className="learning-grid" value={answers.informative ? String(answers.informative) : ""} onValueChange={v => update("informative", Number(v))}>{t.informative.map((label,i) => <label className={`choice-pill ${answers.informative === i+1 ? "selected" : ""}`} key={label}><RadioGroupItem value={String(i+1)} aria-label={label} /><span>{label}</span></label>)}</RadioGroup></div></>}
           {step === 2 && <><span className="eyebrow panel-eyebrow">{t.stages[2]}</span><h1 ref={titleRef} tabIndex={-1} className="step-heading">{t.highlightsTitle}</h1><p className="intro small-intro">{t.highlightsIntro}</p><div className="highlight-grid">{highlights.map((label,i) => { const Icon = featureIcons[i]; return <label key={label} className={`highlight-tile ${answers.highlights.includes(label) ? "selected" : ""}`}><Icon size={25} strokeWidth={1.5} /><span>{t.highlights[label]}</span><Checkbox checked={answers.highlights.includes(label)} onCheckedChange={checked => update("highlights", checked ? [...answers.highlights,label] : answers.highlights.filter(h => h !== label))} aria-label={t.highlights[label]} /></label>; })}</div>{answers.highlights.includes("Other") && <label className="field-label other-field">{t.otherQuestion} <span>{t.optional}</span><input maxLength={120} value={answers.other} onChange={e => update("other",e.target.value)} placeholder={t.otherPlaceholder} /></label>}</>}
           {step === 3 && <><span className="eyebrow panel-eyebrow">{t.stages[3]}</span><h1 ref={titleRef} tabIndex={-1} className="step-heading">{t.finalTitle}</h1><p className="intro small-intro">{t.finalIntro}</p><div className="question-block"><h2>{t.recommendQuestion}</h2><RadioGroup className="recommend-grid" aria-label={t.recommendQuestion} value={answers.recommendation || ""} onValueChange={v => update("recommendation",v as Answers["recommendation"])}>{[{v:"yes",label:t.recommendations[0],icon:ThumbsUp},{v:"maybe",label:t.recommendations[1],icon:Meh},{v:"no",label:t.recommendations[2],icon:MessageCircle}].map(({v,label,icon:Icon}) => <label key={v} className={`recommend-tile ${answers.recommendation === v ? "selected" : ""}`}><RadioGroupItem value={v} className="rating-radio" aria-label={label} /><Icon size={23} strokeWidth={1.5} /><span>{label}</span></label>)}</RadioGroup></div><label className="field-label comment-label">{t.commentQuestion}<span>{t.optional}</span><textarea rows={3} maxLength={500} value={answers.comment} onChange={e => update("comment",e.target.value)} placeholder={t.commentPlaceholder} /><span className="field-bottom"><span>{t.noPersonalDetails}</span><span>{answers.comment.length}/500</span></span></label></>}
-          {step === 4 && <div className="thank-you"><div className="thank-icon"><Check size={40} strokeWidth={1.7} /></div><span className="eyebrow panel-eyebrow">{t.received}</span><h1>{t.thankTitle[0]}<br /><span>{t.thankTitle[1]}</span></h1><p className="intro">{t.thankIntro}</p><div className="thank-line" /><p className="thank-note">{t.thankNote}</p><button className="primary-button done-button" onClick={reset}>{t.done} <ArrowRight size={20}/></button><p className="reset-note">{formatMessage(t.resetIn, { seconds: doneSeconds })}</p></div>}
+          {step === 4 && <div className="thank-you"><div className="thank-icon"><Check size={40} strokeWidth={1.7} /></div><span className="eyebrow panel-eyebrow">{receipt==="synced"?t.received:t.savedDevice}</span><h1>{t.thankTitle[0]}<br /><span>{t.thankTitle[1]}</span></h1><p className="intro">{t.thankIntro}</p><div className="thank-line" /><p className={`receipt-status ${receipt}`} role="status"><CheckCheck size={20}/><span>{receipt==="synced"?t.receiptSynced:t.receiptQueued}</span></p><p className="thank-note">{t.thankNote}</p><button className="primary-button done-button" onClick={reset}>{t.done} <ArrowRight size={20}/></button><p className="reset-note">{formatMessage(t.resetIn, { seconds: doneSeconds })}</p></div>}
         </div>
         {error && <p className="error-message" role="alert">{t.saveError}</p>}
         {step > 0 && step < 4 && <div className="survey-actions"><button className="back-button" onClick={() => go(step - 1)} disabled={busy}><ArrowLeft size={18} /> {t.back}</button><span className="optional-note">{t.questionsOptional}</span><button className="primary-button" disabled={busy} onClick={() => step === 3 ? submit() : go(step+1)}>{busy ? t.saving : step === 3 ? t.submit : t.continue}<ArrowRight size={19} /></button></div>}

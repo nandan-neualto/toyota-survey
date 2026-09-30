@@ -27,6 +27,14 @@ export async function readFeedback(): Promise<QueuedFeedback[]> {
     request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error);
   });
 }
+export async function feedbackReceipt(id: string): Promise<"queued" | "synced" | "missing"> {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const request = db.transaction("responses").objectStore("responses").get(id);
+    request.onsuccess = () => resolve(!request.result ? "missing" : request.result.syncedAt ? "synced" : "queued");
+    request.onerror = () => reject(request.error);
+  });
+}
 export function kioskId() {
   let id = localStorage.getItem("toyota-kiosk-id");
   if (!id) { id = crypto.randomUUID(); localStorage.setItem("toyota-kiosk-id", id); }
@@ -49,10 +57,12 @@ export async function syncFeedback(): Promise<{ pending: number; error?: string 
         if (!response.ok || !response.headers.get("content-type")?.includes("application/json")) throw new Error("Sync unavailable. Saved feedback will retry automatically.");
         const result = await response.json() as { id?: string; saved?: boolean };
         if (result.id !== record.id || result.saved !== true) throw new Error("Server did not confirm receipt.");
-        await saveFeedback({ ...record, syncedAt: new Date().toISOString() }); pending--;
+        const syncedAt = new Date().toISOString();
+        await saveFeedback({ ...record, syncedAt }); pending--;
+        try { localStorage.setItem("toyota-last-sync", syncedAt); } catch { /* Receipt is already committed in IndexedDB. */ }
+        window.dispatchEvent(new Event("feedback-sync"));
       } catch (e) { return { pending, error: e instanceof Error ? e.message : "Sync unavailable" }; }
     }
-    if (records.length) localStorage.setItem("toyota-last-sync", new Date().toISOString());
     return { pending };
   })().finally(() => { syncing = null; });
   return syncing;

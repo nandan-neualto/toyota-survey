@@ -1,0 +1,103 @@
+/* Landscape kiosks give the questions their own scroll area and persistent actions. */
+.kiosk-shell { --header-height: 88px; --footer-height: 64px; }
+.kiosk-shell .site-header { height: var(--header-height); padding-inline: 3%; }
+.site-header .brand, .site-footer a, .site-footer button, .back-button,
+.secondary-button, .primary-button, .language-option, .filter-bar input,
+.staff-tabs [data-slot=tabs-trigger], [data-slot=select-item] { min-height: 48px; }
+.site-footer button, .site-footer a { display: inline-flex; align-items: center; padding-inline: 8px; }
+.localized-dialog-close { height: 48px; width: 48px; }
+.language-option { min-width: 70px; padding: 9px 16px; }
+.site-footer { padding-block: 8px; color: #5c6573; letter-spacing: 1px; }
+.site-footer button, .staff-link, .header-note { color: #535e6d; }
+.survey-top { flex-shrink: 0; }
+.time-badge { background: #fff3f4; color: #ac0719; border: 1px solid #f5d5da; }
+.step-count { color: #586373; }
+.rating-tile, .highlight-tile, .recommend-tile, .choice-pill { background: #fff; border-color: #d5dbe2; transition: border-color .15s, background .15s, box-shadow .15s; }
+.rating-tile:hover, .highlight-tile:hover, .recommend-tile:hover, .choice-pill:hover { background: #fff8f9; border-color: #db5564; }
+.rating-tile.selected, .highlight-tile.selected, .recommend-tile.selected, .choice-pill:has([data-state=checked]) { background: #fff2f4; border-color: #d50920; box-shadow: inset 0 0 0 1px #d50920; }
+.rating-tile:has(:focus-visible), .highlight-tile:has(:focus-visible), .recommend-tile:has(:focus-visible), .choice-pill:has(:focus-visible) { outline: 3px solid #b5071b; outline-offset: 3px; }
+.question-hint, .intro, .optional-note, .field-label>span, .field-bottom,
+.welcome-assurance>span, .journey-label, .reset-note, .thank-note { color: #586372; }
+.question-block h2 { line-height: 1.5; }
+.primary-button { min-width: 150px; font-weight: 600; }
+.survey-actions { background: #fff; padding-top: 16px; margin-top: 0; border-top: 1px solid #e7eaee; flex-shrink: 0; }
+.survey-actions .back-button { padding-inline: 10px; }
+.journey-footer { flex-shrink: 0; }
+.receipt-status { display: flex; align-items: flex-start; gap: 12px; padding: 16px 20px; border-radius: 12px; max-width: 500px; text-align: left; background: #f1f4f7; color: #465465; font-size: 15px; line-height: 1.7; }
+.receipt-status svg { flex-shrink: 0; margin-top: 3px; }
+.receipt-status.synced { color: #245c47; background: #edf7f1; }
+.thank-line { margin-block: 22px; }
+.thank-note { margin-top: 16px; }
+.staff-load-status { display: flex; align-items: center; gap: 10px; padding: 15px 18px; background: #edf1f6; border-radius: 10px; color: #45546a; margin-bottom: 20px; }
+.stats-grid article { box-shadow: 0 5px 20px #1b293004; border-color: #dce2e9; }
+.stats-grid small, .insight-panel>p, .insight-panel .device-detail, .filter-bar label, .feedback-table th, .staff-session-note { color: #596574; }
+.empty-hint, .empty-comments { background: #f7f8fa; border-radius: 10px; margin-top: 20px; }
+.kiosk-dialog { max-height: 90dvh; overflow-y: auto; }
+.kiosk-dialog [data-slot=dialog-title] { padding-right: 28px; }
+:is(button,a,input,textarea,[role=tab],[role=combobox]):focus-visible { outline: 3px solid #b5071b; outline-offset: 3px; }
+@media (min-width:1000px) and (orientation:landscape) {
+  .kiosk-shell { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+  .kiosk-shell .site-header, .kiosk-shell .site-footer { flex-shrink: 0; }
+  .kiosk-shell .site-footer { height: var(--footer-height); }
+  .kiosk-main { flex: 1; min-height: 0; grid-template-columns: 39% 61%; overflow: hidden; }
+  .hero-panel { min-height: 0; height: 100%; }
+  .hero-copy { padding: clamp(30px,4vw,64px); }
+  .hero-copy h2 { font-size: clamp(38px,3.1vw,58px); line-height: 1.16; }
+  .hero-copy p { line-height: 1.8; max-width: 340px; }
+  .hero-caption { left: clamp(30px,4vw,64px); right: 30px; }
+  .survey-panel { width: 100%; max-width: 1040px; height: 100%; min-height: 0; padding: 30px clamp(32px,4vw,72px) 20px; display: flex; flex-direction: column; }
+  .survey-content { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; justify-content: flex-start; padding: 26px 8px 22px 2px; scroll-padding-block: 18px; }
+  .survey-content h1 { font-size: clamp(44px,3.7vw,66px); line-height: 1.1; }
+  .survey-content h1.step-heading { font-size: clamp(35px,2.8vw,48px); line-height: 1.2; }
+  .question-block { margin-top: 26px; }
+  .intro { font-size: 16px; margin-top: 18px; line-height: 1.7; }
+  .rating-tile { min-height: 114px; }
+  .compact .rating-tile { min-height: 90px; }
+  .highlight-grid { margin-top: 24px; }
+  .highlight-tile { min-height: 103px; }
+  .learning-grid .choice-pill { min-height: 56px; }
+  .journey-footer, .survey-actions+.journey-footer { margin-top: 14px; padding-top: 0; }
+  .journey-label { margin-bottom: 9px; }
+  .is-complete .survey-content { justify-content: center; }
+  .thank-you { margin: auto; padding-block: 20px; }
+  .kiosk-shell:lang(ja) .survey-content h1 { font-size: clamp(34px,2.8vw,50px); line-height: 1.45; }
+  .kiosk-shell:lang(kn) .survey-content h1 { font-size: clamp(32px,2.6vw,46px); line-height: 1.65; }
+  .kiosk-shell:lang(ja) .survey-content h1.step-heading, .kiosk-shell:lang(kn) .survey-content h1.step-heading { font-size: clamp(29px,2.2vw,40px); }
+  .kiosk-shell:lang(kn) .hero-copy h2, .kiosk-shell:lang(ja) .hero-copy h2 { font-size: clamp(30px,2.6vw,46px); }
+}
+@media (min-width:1000px) and (orientation:landscape) and (max-height:820px) {
+  .kiosk-shell { --header-height: 76px; --footer-height: 60px; }
+  .survey-panel { padding: 20px 34px 14px; }
+  .survey-content { padding-top: 18px; }
+  .survey-content h1 { font-size: 44px; }
+  .survey-content h1.step-heading { font-size: 34px; }
+  .intro { font-size: 15px; margin-top: 12px; }
+  .question-block, .learning { margin-top: 20px; }
+  .rating-tile { min-height: 94px; }
+  .compact .rating-tile { min-height: 82px; }
+  .hero-copy { padding: 36px; }
+  .hero-copy h2 { font-size: 40px; }
+  .hero-caption { left: 36px; }
+  .highlight-tile { min-height: 90px; padding: 15px; }
+  .survey-actions { padding-top: 12px; }
+  .thank-icon { height: 64px; width: 64px; margin-bottom: 18px; }
+  .kiosk-shell:lang(ja) .survey-content h1 { font-size: 34px; }
+  .kiosk-shell:lang(kn) .survey-content h1 { font-size: 32px; }
+}
+@media (max-width:999px), (orientation:portrait) {
+  .survey-actions { position: sticky; bottom: 0; padding-bottom: 12px; z-index: 2; }
+  .survey-content { padding-bottom: 24px; }
+}
+@media (max-width:600px) {
+  .kiosk-shell .site-header { height: auto; }
+  .language-option { min-height: 48px; min-width: 65px; padding-inline: 10px; }
+  .survey-panel { width: 100%; }
+  .hero-panel { min-height: 190px; }
+  .primary-button { min-width: 120px; }
+  .receipt-status { padding: 14px; font-size: 14px; }
+  .survey-actions { gap: 8px; }
+  .staff-tabs [data-slot=tabs-list] { gap: 18px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  *, *::before, *::after { animation: none!important; transition: none!important; scroll-behavior: auto!important; }
+}

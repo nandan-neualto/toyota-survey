@@ -1,6 +1,9 @@
 import { spawn } from "node:child_process";
+import { copyFileSync, existsSync } from "node:fs";
 const [command, ...extra] = process.argv.slice(2);
 const render = process.env.RENDER || process.env.DEPLOY_TARGET === "render";
+// Wrangler resolves local secrets beside the built configuration, never in client assets.
+if (!render && command === "start" && existsSync(".dev.vars")) copyFileSync(".dev.vars", "dist/server/.dev.vars");
 const args = render
   ? [command === "build" ? "scripts/build-render.mjs" : "scripts/start-render.mjs", ...extra]
   : command === "build" ? ["scripts/run-framework.mjs", "build", ...extra]

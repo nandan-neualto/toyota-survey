@@ -10,6 +10,12 @@ Run `npm run dev` for development, or `npm run build` followed by `npm start` to
 
 Validate translations and accepted response languages with `node scripts/check-localization.mjs`, and type-check with `node node_modules/typescript/bin/tsc --noEmit`.
 
+## Kiosk presentation and reliability
+
+Landscape layouts keep navigation visible while longer forms scroll. Touch targets are at least 48 pixels; Japanese and Kannada retain their script-specific spacing. Completion first confirms **saved on this device** and changes to **feedback received** only after the server acknowledges that response ID. Failed local saves retain the visitor's answers. Staff date changes cancel outdated loads, and CSV export is available only after the complete current result set has loaded.
+
+Run `node --test scripts/test-kiosk-reliability.mjs`, `node scripts/check-localization.mjs`, and `npm run test:render`. The reliability tests use isolated in-memory IndexedDB and cover offline receipt status, retries, storage failure, cancelled pagination, and Unicode CSV. After `npm run build:render`, run `node scripts/test-render-server.mjs` for isolated server/authentication/persistence checks. Both `npm run build` (local Cloudflare) and `npm run build:render` remain supported. Local production preview: `npm start -- --port 5173`.
+
 ## Framework reference
 
 A clean full-stack starter running on [vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and Drizzle support.

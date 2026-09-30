@@ -1,6 +1,7 @@
 import type { Language } from "./languages";
 
 const en = {
+  savedDevice: "SAVED ON THIS DEVICE", receiptQueued: "Your feedback is saved on this kiosk. It will send automatically when the service is available.", receiptSynced: "Your feedback has been received by the centre. Thank you.",
   pageTitle: "Your visit. Your voice. | Toyota Experience Centre",
   home: "Toyota Experience Centre home", brand: "EXPERIENCE\nCENTRE",
   headerNote: "A little feedback. A better experience.", language: "Choose your language",
@@ -46,6 +47,7 @@ const en = {
 
 export type Translation = typeof en;
 const ja: Translation = {
+  savedDevice: "この端末に保存しました", receiptQueued: "ご意見はこの端末に保存されました。サービスに接続でき次第、自動的に送信します。", receiptSynced: "ご意見をセンターで受け付けました。ありがとうございます。",
   pageTitle: "ご来館の感想をお聞かせください | トヨタ エクスペリエンスセンター",
   home: "トヨタ エクスペリエンスセンター ホーム", brand: "エクスペリエンス\nセンター",
   headerNote: "みなさまの声で、よりよい体験へ。", language: "言語を選択",
@@ -90,6 +92,7 @@ const ja: Translation = {
 };
 
 const kn: Translation = {
+  savedDevice: "ಈ ಸಾಧನದಲ್ಲಿ ಉಳಿಸಲಾಗಿದೆ", receiptQueued: "ನಿಮ್ಮ ಅಭಿಪ್ರಾಯವನ್ನು ಈ ಸಾಧನದಲ್ಲಿ ಉಳಿಸಲಾಗಿದೆ. ಸೇವೆ ಲಭ್ಯವಾದಾಗ ಅದು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಕಳುಹಿಸಲಾಗುತ್ತದೆ.", receiptSynced: "ನಿಮ್ಮ ಅಭಿಪ್ರಾಯ ಕೇಂದ್ರಕ್ಕೆ ತಲುಪಿದೆ. ಧನ್ಯವಾದಗಳು.",
   pageTitle: "ನಿಮ್ಮ ಭೇಟಿ. ನಿಮ್ಮ ಅಭಿಪ್ರಾಯ. | ಟೊಯೋಟಾ ಅನುಭವ ಕೇಂದ್ರ",
   home: "ಟೊಯೋಟಾ ಅನುಭವ ಕೇಂದ್ರದ ಮುಖಪುಟ", brand: "ಅನುಭವ\nಕೇಂದ್ರ",
   headerNote: "ನಿಮ್ಮ ಅಭಿಪ್ರಾಯದಿಂದ ಇನ್ನಷ್ಟು ಉತ್ತಮ ಅನುಭವ.", language: "ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ",
